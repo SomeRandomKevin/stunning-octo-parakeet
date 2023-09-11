@@ -5,9 +5,9 @@ pygame.init()
 pygame.font.init()
 
 # create the screen
-height = 1000
-width = 1000
-screen = pygame.display.set_mode((width, height))
+screen = pygame.display.set_mode((1000, 1000))
+width = screen.get_width()
+height = screen.get_height()
 
 # title and icon
 pygame.display.set_caption("Space Invaders")
@@ -16,15 +16,15 @@ pygame.display.set_icon(icon)
 
 # set sprites
 # background sprite
-background = pygame.image.load("sprites/background.jpg")
-background = pygame.transform.scale(background, (width, height/3))
+background = pygame.image.load("sprites/background.png")
+background = pygame.transform.scale(background, (width, height))
 
 # game loop
 running = True
 while running:
-    screen.blit(background, (width, 0))
-    screen.blit(background, (width, height/3))
-    screen.blit(background, (width, 2*height/3))
+
+    screen.blit(background, (0, 0))
+    pygame.display.update()
 
     for event in pygame.event.get():
         # Quit/anti-freeze
