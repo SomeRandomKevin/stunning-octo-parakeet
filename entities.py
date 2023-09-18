@@ -1,5 +1,8 @@
-class Player:
-    ship = ""
+import pygame
 
-    #def __init_(self, Ship_type):
-    #   self.ship = Ship_type
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self, pos):
+        super().__init__()
+        self.image = pygame.image.load('sprites/ship_1.png').convert_alpha()
+        self.rect = self.image.get_rect(midbottom=pos)

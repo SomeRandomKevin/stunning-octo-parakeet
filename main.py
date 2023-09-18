@@ -1,14 +1,24 @@
 import pygame
+from entities import *
+
+
+class Game:
+    def __init__(self):
+        self.player = pygame.sprite.GroupSingle(Player((450, 900)))
+
+    def update(self):
+        self.player.draw(screen)
 
 
 # initialize pygame
 pygame.init()
 pygame.font.init()
+width = 1000
+height = 1000
+screen = pygame.display.set_mode((width, height))
+clock = pygame.time.Clock()
+game = Game()
 
-# create the screen
-screen = pygame.display.set_mode((1000, 1000))
-width = screen.get_width()
-height = screen.get_height()
 
 # title and icon
 pygame.display.set_caption("Space Invaders")
@@ -23,11 +33,11 @@ background = pygame.transform.scale(background, (width, height))
 # game loop
 running = True
 while running:
-
-    screen.blit(background, (0, 0))
-    pygame.display.update()
-
     for event in pygame.event.get():
-        # Quit/anti-freeze
         if event.type == pygame.QUIT:
             running = False
+
+    screen.blit(background, (0, 0))
+    game.update()
+    pygame.display.update()
+    clock.tick(60)
