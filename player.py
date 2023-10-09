@@ -1,4 +1,4 @@
-import pygame
+from bullet import *
 
 
 class Player(pygame.sprite.Sprite):
@@ -6,12 +6,18 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('sprites/ship_1.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (80, 100))
+        self.bullet_image = pygame.image.load('sprites/laser_1.png').convert_alpha()
+        self.bullet_image = pygame.transform.scale(self.bullet_image, (5, 20))
         self.x = x
         self.y = y
+        self.rect = self.image.get_rect(midbottom=(x, y))
         self.vel = 0
         self.leftMove = False
         self.rightMove = False
-        self.rect = self.image.get_rect(midbottom=(x, y))
+        self.shooting = False
+        self.bullets = []
+        self.cooldown = 10
+        self.cooldown_counter = self.cooldown
 
     def move(self):
         # Velocity if trying to move in both directions at the same time
@@ -43,5 +49,8 @@ class Player(pygame.sprite.Sprite):
         self.x = min(920, self.x)
         self.x += self.vel
 
-    #def shoot(self):
-
+    def shoot(self):
+        if self.cooldown_counter == 0:
+            bullet = Bullet(self.x+40, self.y-50, self.bullet_image)
+            self.bullets.append(bullet)
+            self.cooldown_counter = self.cooldown

@@ -1,4 +1,3 @@
-import pygame
 import time
 from player import *
 
@@ -10,8 +9,18 @@ class Game:
 
     def update(self):
         self.player.move()
+        self.player.cooldown_counter -= 1
+        self.player.cooldown_counter = max(self.player.cooldown_counter, 0)
+        if self.player.shooting:
+            self.player.shoot()
+        for bullet in self.player.bullets:
+            bullet.move()
+            bullet.draw(screen)
+            if not bullet.on_screen(height):
+                del bullet
         self.playerSprite.sprite.rect.x = self.player.x
         self.playerSprite.draw(screen)
+
 
 
 # initialize pygame
@@ -46,11 +55,15 @@ while running:
                 game.player.leftMove = True
             elif event.key == pygame.K_d:
                 game.player.rightMove = True
+            elif event.key == pygame.K_SPACE:
+                game.player.shooting = True
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a:
                 game.player.leftMove = False
             elif event.key == pygame.K_d:
                 game.player.rightMove = False
+            elif event.key == pygame.K_SPACE:
+                game.player.shooting = False
 
         # shooting
 
