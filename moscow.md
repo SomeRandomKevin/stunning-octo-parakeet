@@ -14,6 +14,6 @@ Could:
 - Boss
 - Adjustable/scaling difficulty
 
-Wont:
+Won't:
 - Customizable player/enemy skins
 - Player/Enemy animation

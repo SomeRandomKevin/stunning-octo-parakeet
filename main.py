@@ -22,7 +22,6 @@ class Game:
         self.playerSprite.draw(screen)
 
 
-
 # initialize pygame
 pygame.init()
 pygame.font.init()
@@ -30,7 +29,6 @@ width = 1000
 height = 1000
 screen = pygame.display.set_mode((width, height))
 game = Game()
-
 
 # title and icon
 pygame.display.set_caption("Space Invaders")
@@ -70,4 +68,4 @@ while running:
     screen.blit(background, (0, 0))
     game.update()
     pygame.display.update()
-    time.sleep(1/60)
+    time.sleep(1 / 60)
