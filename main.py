@@ -1,6 +1,6 @@
 import pygame
 import time
-from entities import *
+from player import *
 
 
 class Game:
@@ -9,17 +9,6 @@ class Game:
         self.playerSprite = pygame.sprite.GroupSingle(self.player)
 
     def update(self):
-        # movement update (moved to entities.py)
-        """if self.leftMove:
-            self.player.vel += 0.75
-            self.player.vel = min(self.player.vel, 10)
-            self.playerSprite.sprite.rect.x -= self.player.vel
-            self.playerSprite.sprite.rect.x = max(0, self.playerSprite.sprite.rect.x)
-        if self.rightMove:
-            self.player.vel += 0.75
-            self.player.vel = min(self.player.vel, 10)
-            self.playerSprite.sprite.rect.x += self.player.vel
-            self.playerSprite.sprite.rect.x = min(920, self.playerSprite.sprite.rect.x)"""
         self.player.move()
         self.playerSprite.sprite.rect.x = self.player.x
         self.playerSprite.draw(screen)
@@ -60,10 +49,8 @@ while running:
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a:
                 game.player.leftMove = False
-                game.player.vel = 0
             elif event.key == pygame.K_d:
                 game.player.rightMove = False
-                game.player.vel = 0
 
         # shooting
 
