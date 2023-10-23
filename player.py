@@ -52,6 +52,6 @@ class Player(pygame.sprite.Sprite):
 
     def shoot(self):
         if self.cooldown_counter == 0:
-            bullet = Bullet(self.x+40, self.y-50, self.bullet_image)
+            bullet = Bullet(self.x+40, self.y-50, 10, self.bullet_image)
             self.bullets.append(bullet)
             self.cooldown_counter = self.cooldown

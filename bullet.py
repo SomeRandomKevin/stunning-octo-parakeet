@@ -1,9 +1,9 @@
 class Bullet:
-    def __init__(self, x, y, image):
+    def __init__(self, x, y, vel, image):
         self.image = image
         self.x = x
         self.y = y
-        self.vel = 10
+        self.vel = vel
         self.rect = self.image.get_rect(midbottom=(x, y))
 
     def draw(self, window):
