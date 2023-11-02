@@ -1,62 +1,8 @@
 import time
-import random
-from player import *
-from enemies import *
 
+import pygame
 
-class Game:
-    def __init__(self):
-        self.player = Player(450, 900)
-        self.playerSprite = pygame.sprite.GroupSingle(self.player)
-        self.enemies = []
-        self.spawn_cooldown = 150
-        self.spawn_counter = 150
-
-    def spawn(self):
-        if self.spawn_counter == 0:
-            enemy = Enemy(random.randint(60, 940), 0)
-            self.enemies.append(enemy)
-            self.spawn_counter = self.spawn_cooldown
-
-    def update(self):
-        # updating player position
-        self.player.move()
-        self.playerSprite.sprite.rect.x = self.player.x
-        self.playerSprite.draw(screen)
-        # shooting and enemy spawn timers
-        self.player.cooldown_counter -= 1
-        self.player.cooldown_counter = max(self.player.cooldown_counter, 0)
-        self.spawn_counter -= 1
-        self.spawn_counter = max(self.spawn_counter, 0)
-
-        # spawning and updating enemies
-        if self.spawn_counter == 0:
-            self.spawn()
-        for enemy in self.enemies:
-            enemy.move()
-            enemy.draw(screen)
-            if enemy.y > 1070:  # screen height + pixels for enemy to move off-screen
-                del enemy
-                continue
-        # enemy shooting timer, shooting and bullet updates
-            enemy.cooldown_counter -= 1
-            enemy.cooldown_counter = max(enemy.cooldown_counter, 0)
-            enemy.shoot()
-            for bullet in enemy.bullets:
-                bullet.move()
-                bullet.draw(screen)
-                if not bullet.on_screen(height):  # prevent mass updating of off-screen bullets by elimination
-                    del bullet
-
-        # player shooting and bullet updates
-        if self.player.shooting:
-            self.player.shoot()
-        for bullet in self.player.bullets:
-            bullet.move()
-            bullet.draw(screen)
-            if not bullet.on_screen(height):  # prevent mass updating of off-screen bullets by elimination
-                del bullet
-
+from game import *
 
 # initialize pygame
 pygame.init()
@@ -64,44 +10,75 @@ pygame.font.init()
 width = 1000
 height = 1000
 screen = pygame.display.set_mode((width, height))
-game = Game()
+game = Game(screen, width, height)
+
+# message
+play_message = "press esc to play"
+font = pygame.font.Font(None, 60)
+play_message = font.render(play_message, True, (255, 255, 255))
 
 # title and icon
 pygame.display.set_caption("Space Invaders")
 icon = pygame.image.load("sprites/icon.png")
 pygame.display.set_icon(icon)
 
-# set sprites
 # background sprite
 background = pygame.image.load("sprites/background.png")
 background = pygame.transform.scale(background, (width, height))
 
 # game loop
 running = True
+mask_shown = False
 while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+    if not game.alive:
+        game = Game(screen, width, height)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    game.alive = True
+                elif event.key == pygame.K_RETURN:
+                    mask_shown = True
 
-        # left and right movement
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_a:
-                game.player.leftMove = True
-            elif event.key == pygame.K_d:
-                game.player.rightMove = True
-            elif event.key == pygame.K_SPACE:
-                game.player.shooting = True
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_a:
-                game.player.leftMove = False
-            elif event.key == pygame.K_d:
-                game.player.rightMove = False
-            elif event.key == pygame.K_SPACE:
-                game.player.shooting = False
+        screen.blit(play_message, (350, 500))
+        pygame.display.update()
 
-        # shooting
+    if game.alive:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-    screen.blit(background, (0, 0))
-    game.update()
-    pygame.display.update()
-    time.sleep(1 / 60)
+            # actions start
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_a:
+                    game.player.leftMove = True
+                elif event.key == pygame.K_d:
+                    game.player.rightMove = True
+                elif event.key == pygame.K_SPACE:
+                    game.player.shooting = True
+                elif event.key == pygame.K_RETURN:
+                    mask_shown = True
+
+            # actions stop
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_a:
+                    game.player.leftMove = False
+                elif event.key == pygame.K_d:
+                    game.player.rightMove = False
+                elif event.key == pygame.K_SPACE:
+                    game.player.shooting = False
+
+        screen.blit(background, (0, 0))
+        game.update()
+        if mask_shown:
+            screen.blit(game.player.mask.to_surface(), (game.player.mask_rect.x, game.player.mask_rect.y))
+            for bullet in game.player.bullets:
+                screen.blit(bullet.mask.to_surface(), (bullet.mask_rect.x, bullet.mask_rect.y))
+            for enemy in game.enemies:
+                screen.blit(enemy.mask.to_surface(), (enemy.mask_rect.x, enemy.mask_rect.y))
+            for bullet in game.enemy_bullets:
+                screen.blit(bullet.mask.to_surface(), (bullet.mask_rect.x, bullet.mask_rect.y))
+
+        pygame.display.update()
+        time.sleep(1 / 60)
